@@ -220,8 +220,9 @@ class startLanguageToolServerCommand(sublime_plugin.TextCommand):
     """Launch local LanguageTool Server."""
 
     def run(self, edit):
-
-        jar_path = get_settings().get('languagetool_jar')
+        settings = get_settings()
+        jar_path = settings.get('languagetool_jar')
+        user_cmd = settings.get('languagetool_cmd', [])
 
         if not jar_path:
             show_panel_text("Setting languagetool_jar is undefined")
@@ -237,7 +238,7 @@ class startLanguageToolServerCommand(sublime_plugin.TextCommand):
 
         sublime.status_message('Starting local LanguageTool server ...')
 
-        cmd = ['java', '-jar', jar_path, '-t']
+        cmd = user_cmd or ['java', '-jar', jar_path, '-t']
 
         if sublime.platform() == "windows":
             p = subprocess.Popen(
