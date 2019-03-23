@@ -6,6 +6,13 @@
     "languagetool_jar": "C:\\bin\\LanguageTool-3.5\\languagetool.jar",
     // "languagetool_cmd": ["java", "-jar", "languagetool.jar", "-t"],
     // "languagetool_mother_tongue": "de-DE",
+    "text_filters": [
+        // the replacement should not change the amount of characters
+        // {
+        //     "pattern": "(\\s+ )\\*(\\t?)",
+        //     "replacement": "\\1 \\2"
+        // }
+    ],
     "highlight-scope": "comment",
     // "match_selector": "comment",
     "ignored-scopes": [

@@ -350,7 +350,7 @@ class LanguageToolCommand(sublime_plugin.TextCommand):
         selection = self.view.sel()[0]  # first selection (ignore rest)
         everything = sublime.Region(0, self.view.size())
         check_region = everything if selection.empty() else selection
-        check_text = self.view.substr(check_region)
+        check_text = self.filter_text(self.view.substr(check_region))
 
         self.view.run_command("clear_language_problems")
 
@@ -415,6 +415,16 @@ class LanguageToolCommand(sublime_plugin.TextCommand):
             set_status_bar("no language problems were found :-)")
 
         self.view.problems = problems
+
+    def filter_text(self, text):
+        """Apply user-defined filters to the text sent to the server."""
+        filters = get_settings().get('text_filters', [])
+
+        # apply all the replacements
+        for f in filters:
+            text = re.sub(f['pattern'], f['replacement'], text)
+
+        return text
 
     def is_ignored_pattern(self, problem):
         """Check whether to ignore a problem based on the user patterns."""
