@@ -22,6 +22,13 @@ def getResponse(server, text, language, disabledRules):
 		'User-Agent': 'sublime',
 		'disabledRules' : ','.join(disabledRules)
 	}
+
+	# add the mother tongue if specified in the settings
+	settings = sublime.load_settings('LanguageTool.sublime-settings')
+	mother_tongue = settings.get('languagetool_mother_tongue', None)
+	if mother_tongue:
+		payload['motherTongue'] = mother_tongue
+
 	content = _post(server, payload)
 	if content:
 		j = json.loads(content.decode('utf-8'))
