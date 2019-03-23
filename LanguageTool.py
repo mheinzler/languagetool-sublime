@@ -342,6 +342,7 @@ class LanguageToolCommand(sublime_plugin.TextCommand):
 
         settings = get_settings()
         server_url = get_server_url(settings, force_server)
+        match_selector = settings.get('match_selector')
         ignored_scopes = settings.get('ignored-scopes')
         highlight_scope = settings.get('highlight-scope')
 
@@ -376,7 +377,12 @@ class LanguageToolCommand(sublime_plugin.TextCommand):
 
         def is_ignored(problem):
             """Return True iff any problem scope is ignored."""
-            scope_string = self.view.scope_name(problem['offset'])
+            offset = problem['offset']
+            if (match_selector
+                    and not self.view.match_selector(offset, match_selector)):
+                return True
+
+            scope_string = self.view.scope_name(offset)
             scopes = scope_string.split()
             return cross_match(scopes, ignored_scopes, fnmatch.fnmatch)
 
