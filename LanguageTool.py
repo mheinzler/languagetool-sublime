@@ -5,6 +5,7 @@ This is a simple Sublime Text plugin for checking grammar. It passes buffer
 content to LanguageTool (via http) and highlights reported problems.
 """
 
+import re
 import sublime
 import sublime_plugin
 import subprocess
@@ -384,7 +385,11 @@ class LanguageToolCommand(sublime_plugin.TextCommand):
 
             scope_string = self.view.scope_name(offset)
             scopes = scope_string.split()
-            return cross_match(scopes, ignored_scopes, fnmatch.fnmatch)
+            if cross_match(scopes, ignored_scopes, fnmatch.fnmatch):
+                return True
+
+            # check the ignore line and file patterns
+            return self.is_ignored_pattern(problem)
 
         def add_highlight_region(region_key, problem):
             region = get_region(problem)
@@ -410,6 +415,39 @@ class LanguageToolCommand(sublime_plugin.TextCommand):
             set_status_bar("no language problems were found :-)")
 
         self.view.problems = problems
+
+    def is_ignored_pattern(self, problem):
+        """Check whether to ignore a problem based on the user patterns."""
+        settings = get_settings()
+
+        # find the region of the problem
+        offset = problem['offset']
+        length = problem['length']
+        region = sublime.Region(offset, offset + length)
+
+        # we ignore this problem if one of the line patterns is found in the
+        # problem line and includes the problem region
+        ignored_line_patterns = settings.get('ignored_line_patterns', [])
+        line_region = self.view.line(region)
+        line = self.view.substr(line_region)
+        for pattern in ignored_line_patterns:
+            for m in re.finditer(pattern, line):
+                matched_region = sublime.Region(m.start() + line_region.a,
+                                                m.end() + line_region.a)
+                if matched_region.intersects(region):
+                    return True
+
+        # we ignore this problem if one of the file patterns is found in the
+        # file and includes the problem region
+        ignored_file_patterns = settings.get('ignored_file_patterns', [])
+        file = self.view.substr(sublime.Region(0, self.view.size()))
+        for pattern in ignored_file_patterns:
+            for m in re.finditer(pattern, file, re.MULTILINE |  re.DOTALL):
+                matched_region = sublime.Region(m.start(), m.end())
+                if matched_region.intersects(region):
+                    return True
+
+        return False
 
 
 def compose(f1, f2):

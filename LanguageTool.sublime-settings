@@ -13,5 +13,7 @@
         "meta.*.latex",
         "comment.*.tex",
         "keyword.control.tex"
-    ]
+    ],
+    "ignored_line_patterns": [],
+    "ignored_file_patterns": []
 }
