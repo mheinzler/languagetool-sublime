@@ -442,8 +442,16 @@ class LanguageToolCommand(sublime_plugin.TextCommand):
         line = self.view.substr(line_region)
         for pattern in ignored_line_patterns:
             for m in re.finditer(pattern, line, re.IGNORECASE):
-                matched_region = sublime.Region(m.start() + line_region.a,
-                                                m.end() + line_region.a)
+                try:
+                    # if the pattern uses a group named ignore, use that for
+                    # the ignored region
+                    matched_region = sublime.Region(
+                        m.start('ignore') + line_region.a,
+                        m.end('ignore') + line_region.a)
+                except IndexError:
+                    matched_region = sublime.Region(m.start() + line_region.a,
+                                                    m.end() + line_region.a)
+
                 if matched_region.intersects(region):
                     return True
 
