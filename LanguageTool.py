@@ -441,7 +441,7 @@ class LanguageToolCommand(sublime_plugin.TextCommand):
         line_region = self.view.line(region)
         line = self.view.substr(line_region)
         for pattern in ignored_line_patterns:
-            for m in re.finditer(pattern, line):
+            for m in re.finditer(pattern, line, re.IGNORECASE):
                 matched_region = sublime.Region(m.start() + line_region.a,
                                                 m.end() + line_region.a)
                 if matched_region.intersects(region):
@@ -451,8 +451,9 @@ class LanguageToolCommand(sublime_plugin.TextCommand):
         # file and includes the problem region
         ignored_file_patterns = settings.get('ignored_file_patterns', [])
         file = self.view.substr(sublime.Region(0, self.view.size()))
+        re_flags = re.IGNORECASE | re.MULTILINE |  re.DOTALL
         for pattern in ignored_file_patterns:
-            for m in re.finditer(pattern, file, re.MULTILINE |  re.DOTALL):
+            for m in re.finditer(pattern, file, re_flags):
                 matched_region = sublime.Region(m.start(), m.end())
                 if matched_region.intersects(region):
                     return True
