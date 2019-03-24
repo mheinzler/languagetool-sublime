@@ -451,7 +451,7 @@ class LanguageToolCommand(sublime_plugin.TextCommand):
         # file and includes the problem region
         ignored_file_patterns = settings.get('ignored_file_patterns', [])
         file = self.view.substr(sublime.Region(0, self.view.size()))
-        re_flags = re.IGNORECASE | re.MULTILINE |  re.DOTALL
+        re_flags = re.IGNORECASE | re.MULTILINE | re.DOTALL
         for pattern in ignored_file_patterns:
             for m in re.finditer(pattern, file, re_flags):
                 matched_region = sublime.Region(m.start(), m.end())
