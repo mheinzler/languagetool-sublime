@@ -354,7 +354,11 @@ class LanguageToolCommand(sublime_plugin.TextCommand):
 
         self.view.run_command("clear_language_problems")
 
-        language = self.view.settings().get('language_tool_language', 'auto')
+        language = settings.get('languagetool_language')
+        if not language:
+            language = self.view.settings().get('language_tool_language',
+                                                'auto')
+
         ignored_ids = [rule['id'] for rule in load_ignored_rules()]
 
         matches = LTServer.getResponse(server_url, check_text, language,

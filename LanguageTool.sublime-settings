@@ -5,6 +5,7 @@
     "display_mode": "panel",
     "languagetool_jar": "C:\\bin\\LanguageTool-3.5\\languagetool.jar",
     // "languagetool_cmd": ["java", "-jar", "languagetool.jar", "-t"],
+    // "languagetool_language": "en-US",
     // "languagetool_mother_tongue": "de-DE",
     "text_filters": [
         // the replacement should not change the amount of characters
