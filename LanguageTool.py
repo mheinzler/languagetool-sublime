@@ -452,7 +452,7 @@ class LanguageToolCommand(sublime_plugin.TextCommand):
                     matched_region = sublime.Region(m.start() + line_region.a,
                                                     m.end() + line_region.a)
 
-                if matched_region.intersects(region):
+                if matched_region.contains(region):
                     return True
 
         # we ignore this problem if one of the file patterns is found in the
@@ -463,7 +463,7 @@ class LanguageToolCommand(sublime_plugin.TextCommand):
         for pattern in ignored_file_patterns:
             for m in re.finditer(pattern, file, re_flags):
                 matched_region = sublime.Region(m.start(), m.end())
-                if matched_region.intersects(region):
+                if matched_region.contains(region):
                     return True
 
         return False
