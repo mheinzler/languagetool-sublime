@@ -343,9 +343,6 @@ class LanguageToolCommand(sublime_plugin.TextCommand):
 
         settings = get_settings()
         server_url = get_server_url(settings, force_server)
-        match_selector = settings.get('match_selector')
-        ignored_scopes = settings.get('ignored-scopes')
-        highlight_scope = settings.get('highlight-scope')
 
         selection = self.view.sel()[0]  # first selection (ignore rest)
         everything = sublime.Region(0, self.view.size())
@@ -361,13 +358,20 @@ class LanguageToolCommand(sublime_plugin.TextCommand):
 
         ignored_ids = [rule['id'] for rule in load_ignored_rules()]
 
-        matches = LTServer.getResponse(server_url, check_text, language,
-                                       ignored_ids)
+        LTServer.getResponse(server_url, check_text, language,
+                             ignored_ids,
+                             lambda m: self.process_matches(m, check_region))
 
+    def process_matches(self, matches, check_region):
         if matches == None:
             set_status_bar('could not parse server response (may be due to'
                            ' quota if using https://languagetool.org)')
             return
+
+        settings = get_settings()
+        match_selector = settings.get('match_selector')
+        ignored_scopes = settings.get('ignored-scopes')
+        highlight_scope = settings.get('highlight-scope')
 
         def get_region(problem):
             """Return a Region object corresponding to problem text."""
