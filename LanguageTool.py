@@ -403,7 +403,7 @@ class LanguageToolCommand(sublime_plugin.TextCommand):
                                   sublime.DRAW_OUTLINED)
 
 
-        shifter = lambda problem: shift_offset(problem, check_region.a)
+        shifter = lambda problem: shift_offset(problem, check_region.begin())
 
         get_problem = compose(shifter, parse_match)
 
