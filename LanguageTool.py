@@ -449,7 +449,14 @@ class LanguageToolCommand(sublime_plugin.TextCommand):
         line_region = self.view.line(region)
         line = self.view.substr(line_region)
         for pattern in ignored_line_patterns:
-            for m in re.finditer(pattern, line, re.IGNORECASE):
+            re_flags = re.IGNORECASE
+            if '?-i:' in pattern:
+                # manually handle disabling the re.IGNORECASE mode because it is
+                # not supported in ST3's regex module
+                re_flags = 0
+                pattern = pattern.replace('?-i:', '')
+
+            for m in re.finditer(pattern, line, re_flags):
                 try:
                     # if the pattern uses a group named ignore, use that for
                     # the ignored region
