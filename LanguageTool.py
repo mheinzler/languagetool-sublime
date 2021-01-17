@@ -26,6 +26,9 @@ else:
     from . import LanguageList
 
 
+STATUS_RESULTS_KEY = "LanguageToolResults"
+
+
 def move_caret(view, i, j):
     """Select character range [i, j] in view."""
     target = view.text_point(0, i)
@@ -362,6 +365,8 @@ class LanguageToolCommand(sublime_plugin.TextCommand):
                              ignored_ids,
                              lambda m: self.process_matches(m, check_region))
 
+        self.view.set_status(STATUS_RESULTS_KEY, "LanguageTool(...)")
+
     def process_matches(self, matches, check_region):
         if matches == None:
             set_status_bar('could not parse server response (may be due to'
@@ -419,8 +424,11 @@ class LanguageToolCommand(sublime_plugin.TextCommand):
 
         if problems:
             select_problem(self.view, problems[0])
+            self.view.set_status(STATUS_RESULTS_KEY,
+                                 "LanguageTool({})".format(len(problems)))
         else:
             set_status_bar("no language problems were found :-)")
+            self.view.set_status(STATUS_RESULTS_KEY, "LanguageTool(ok)")
 
         self.view.problems = problems
 
