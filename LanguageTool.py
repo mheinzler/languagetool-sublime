@@ -371,6 +371,7 @@ class LanguageToolCommand(sublime_plugin.TextCommand):
         if matches == None:
             set_status_bar('could not parse server response (may be due to'
                            ' quota if using https://languagetool.org)')
+            self.view.set_status(STATUS_RESULTS_KEY, "LanguageTool(error)")
             return
 
         settings = get_settings()
