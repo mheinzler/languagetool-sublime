@@ -546,6 +546,13 @@ def parse_match(match):
     return problem
 
 
+class LanguageToolOpenFilesCommand(sublime_plugin.WindowCommand):
+    def run(self):
+        # check the text of all views
+        for v in self.window.views():
+            v.run_command("language_tool")
+
+
 class DeactivateRuleCommand(sublime_plugin.TextCommand):
     def run(self, edit):
         ignored = load_ignored_rules()
