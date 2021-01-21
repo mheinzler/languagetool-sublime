@@ -393,8 +393,10 @@ class LanguageToolCommand(sublime_plugin.TextCommand):
         def is_ignored(problem):
             """Return True iff any problem scope is ignored."""
             offset = problem['offset']
+            end = offset + problem['length'] - 1  # some scopes end early
             if (match_selector
-                    and not self.view.match_selector(offset, match_selector)):
+                and not (self.view.match_selector(offset, match_selector)
+                         and self.view.match_selector(end, match_selector))):
                 return True
 
             scope_string = self.view.scope_name(offset)
